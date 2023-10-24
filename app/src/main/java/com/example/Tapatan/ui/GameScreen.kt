@@ -1,8 +1,8 @@
 package com.example.Tapatan.ui
 
-
-
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,8 +21,8 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
     val buttons = gameViewModel.buttons
     val gameEnded by gameViewModel.gameEnded
     val winner by gameViewModel.winner
-
-
+    val gamePhase by gameViewModel.gamePhase
+    val selectedPiece by gameViewModel.selectedPiece
 
     if (gameEnded && winner != null) {
         AlertDialog(
@@ -37,7 +37,12 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
         )
     }
 
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary) // Apply background color here
+            .padding(16.dp),
+    )
 
     Column(
         modifier = Modifier
@@ -71,30 +76,44 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
                             text = buttons[row][col] ?: "",
                             onClick = {
                                 gameViewModel.onButtonClick(row, col)
-                            }
+                            },
+                            isSelected = selectedPiece == Pair(row, col)
                         )
                     }
                 }
             }
         }
 
-
-
         MyButton("Reset Game", onClick = { gameViewModel.resetGame() })
     }
 }
 
-
-
 @Composable
-fun MyButton(text: String, onClick: () -> Unit) {
+fun MyButton(text: String, onClick: () -> Unit, isSelected: Boolean = false) {
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+    val contentColor = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp)
+        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor, contentColor = contentColor),
+        modifier = Modifier
+            .padding(8.dp)
+            .background(backgroundColor, RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp)
     ) {
         Text(text)
     }
 }
+
 
 @Preview
 @Composable
