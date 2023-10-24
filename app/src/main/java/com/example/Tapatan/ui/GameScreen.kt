@@ -1,12 +1,14 @@
 package com.example.Tapatan.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,16 +91,19 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
 
 @Composable
 fun MyButton(text: String, onClick: () -> Unit, isSelected: Boolean = false) {
+    val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isSelected) {
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+        if (isDarkTheme) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+        else Color.Blue.copy(alpha = 0.2f)
     } else {
-        MaterialTheme.colorScheme.surface
+        if (isDarkTheme) MaterialTheme.colorScheme.surface
+        else Color.Blue
     }
 
     val contentColor = if (isSelected) {
         MaterialTheme.colorScheme.onPrimary
     } else {
-        MaterialTheme.colorScheme.onSurface
+        Color.White
     }
 
     Button(
