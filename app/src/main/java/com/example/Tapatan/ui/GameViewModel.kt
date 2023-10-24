@@ -11,6 +11,8 @@ class GameViewModel : ViewModel() {
     var winner = mutableStateOf<String?>(null)
     var gamePhase = mutableStateOf("placing")
     var selectedPiece = mutableStateOf<Pair<Int, Int>?>(null)
+    var blackScore = mutableStateOf(0)
+    var whiteScore = mutableStateOf(0)
 
     fun onButtonClick(row: Int, col: Int) {
         when (gamePhase.value) {
@@ -63,8 +65,16 @@ class GameViewModel : ViewModel() {
     }
 
     private fun checkForWin(row: Int, col: Int): Boolean {
-        // Existing checkForWin implementation
         val player = buttons[row][col]
+
+        // Function to update the score
+        fun updateScore() {
+            if (player == "Black") {
+                blackScore.value += 1
+            } else if (player == "White") {
+                whiteScore.value += 1
+            }
+        }
 
         // Check for horizontal win
         for (i in 0 until 3) {
@@ -72,6 +82,7 @@ class GameViewModel : ViewModel() {
                 break
             }
             if (i == 2) {
+                updateScore()
                 return true
             }
         }
@@ -82,6 +93,7 @@ class GameViewModel : ViewModel() {
                 break
             }
             if (i == 2) {
+                updateScore()
                 return true
             }
         }
@@ -93,6 +105,7 @@ class GameViewModel : ViewModel() {
                     break
                 }
                 if (i == 2) {
+                    updateScore()
                     return true
                 }
             }
@@ -105,6 +118,7 @@ class GameViewModel : ViewModel() {
                     break
                 }
                 if (i == 2) {
+                    updateScore()
                     return true
                 }
             }
@@ -112,7 +126,6 @@ class GameViewModel : ViewModel() {
 
         return false
     }
-
     fun resetGame() {
         buttons = Array(3) { arrayOfNulls<String>(3) }
         currentPlayer.value = "Black"
@@ -122,4 +135,10 @@ class GameViewModel : ViewModel() {
         gamePhase.value = "placing"
         selectedPiece.value = null
     }
-}
+    fun newGame() {
+        resetGame()
+        blackScore.value = 0
+        whiteScore.value = 0
+    }
+    }
+
