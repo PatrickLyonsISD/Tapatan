@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,9 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+
+
 @Composable
 fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
-    val currentPlayer by remember(gameViewModel) { derivedStateOf { gameViewModel.currentPlayer } }
+    val currentPlayer = gameViewModel.currentPlayer
+    val buttons = gameViewModel.buttons
+
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -35,11 +37,10 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
                 .padding(top = 16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                text = "Turn: $currentPlayer",
-                fontSize = 40.sp
-            )
+
         }
+
+
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -52,32 +53,35 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
                 ) {
                     for (col in 0 until 3) {
                         MyButton(
-                            text = gameViewModel.buttons[row][col] ?: "",
-                            row = row,
-                            col = col,
-                            gameViewModel = gameViewModel,
+                            text = buttons[row][col].value,
                             onClick = {
                                 gameViewModel.onButtonClick(row, col)
-                            })
+                            }
+                        )
                     }
                 }
             }
         }
 
-        MyButton("Reset Game", row = 0, col = 0, gameViewModel, onClick = { gameViewModel.resetGame() })
 
+
+        MyButton("Reset Game", onClick = { gameViewModel.resetGame() })
     }
 }
 
+
+
 @Composable
-fun MyButton(text: String, row: Int, col: Int, gameViewModel: GameViewModel, onClick: () -> Unit) {
+fun MyButton(text: String?, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         modifier = Modifier.padding(8.dp)
     ) {
-        Text(text)
+        Text(text ?: "")
     }
 }
+
+
 
 @Preview
 @Composable

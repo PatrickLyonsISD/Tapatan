@@ -16,34 +16,44 @@
 
 package com.example.Tapatan.ui
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
+
+
 class GameViewModel : ViewModel() {
-    var buttons = Array(3) { arrayOfNulls<String>(3) }
-    var currentPlayer = "Black"
-    var roundCount = 0
-    var gameEnded = false
+    var buttons: Array<Array<MutableState<String?>>> = Array(3) { Array(3) { mutableStateOf(null) } }
+    var currentPlayer: MutableState<String> = mutableStateOf("Black")
+    var roundCount: MutableState<Int> = mutableStateOf(0)
+    var gameEnded: MutableState<Boolean> = mutableStateOf(false)
+
+
 
     fun onButtonClick(row: Int, col: Int) {
-        if (buttons[row][col] == null && !gameEnded) {
-            buttons[row][col] = currentPlayer
-            roundCount++
+        if (buttons[row][col].value == null && !gameEnded.value) {
+            buttons[row][col].value = currentPlayer.value
+            roundCount.value = roundCount.value + 1
             if (checkForWin(row, col)) {
-                gameEnded = true
-            } else if (roundCount == 9) {
-                gameEnded = true
+                gameEnded.value = true
+            } else if (roundCount.value == 9) {
+                gameEnded.value = true
             } else {
-                currentPlayer = if (currentPlayer == "Black") "White" else "Black"
+                currentPlayer.value = if (currentPlayer.value == "Black") "White" else "Black"
             }
         }
     }
 
+
+
     private fun checkForWin(row: Int, col: Int): Boolean {
-        val player = buttons[row][col]
+        val player = buttons[row][col].value
+
+
 
         // Check for horizontal win
         for (i in 0 until 3) {
-            if (buttons[row][i] != player) {
+            if (buttons[row][i].value != player) {
                 break
             }
             if (i == 2) {
@@ -51,20 +61,24 @@ class GameViewModel : ViewModel() {
             }
         }
 
+
+
         // Check for vertical win
         for (i in 0 until 3) {
-            if (buttons[i][col] != player) {
+            if (buttons[i][col].value != player) {
                 break
             }
             if (i == 2) {
                 return true
             }
         }
+
+
 
         // Check for diagonal win (top-left to bottom-right)
         if (row == col) {
             for (i in 0 until 3) {
-                if (buttons[i][i] != player) {
+                if (buttons[i][i].value != player) {
                     break
                 }
                 if (i == 2) {
@@ -72,11 +86,13 @@ class GameViewModel : ViewModel() {
                 }
             }
         }
+
+
 
         // Check for diagonal win (top-right to bottom-left)
         if (row + col == 2) {
             for (i in 0 until 3) {
-                if (buttons[i][2 - i] != player) {
+                if (buttons[i][2 - i].value != player) {
                     break
                 }
                 if (i == 2) {
@@ -85,13 +101,21 @@ class GameViewModel : ViewModel() {
             }
         }
 
+
+
         return false
     }
 
+
+
     fun resetGame() {
-        buttons = Array(3) { arrayOfNulls<String>(3) }
-        currentPlayer = "Black"
-        roundCount = 0
-        gameEnded = false
+        for (i in 0..2) {
+            for (j in 0..2) {
+                buttons[i][j].value = null
+            }
+        }
+        currentPlayer.value = "Black"
+        roundCount.value = 0
+        gameEnded.value = false
     }
 }
